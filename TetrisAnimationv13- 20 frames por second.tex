@@ -1,0 +1,1209 @@
+\documentclass[]{beamer}
+
+\usepackage{tikz}
+\usepackage{animate}
+\usepackage{verbatim}
+\usepackage{rotating}
+
+\newcounter{x}
+\newcounter{y}
+\newcounter{eliminate}
+\setcounter{y}{0}
+\setcounter{eliminate}{-1}
+\newcounter{jogador}
+\newcounter{aux}
+\setcounter{aux}{0}
+
+\newcommand{\fixborderbug}{
+	\draw[line width=1pt,white](25,0)--+(0,21);
+	\draw[line width=1pt,white](0,-0.04)--+(25,0);
+	\draw[line width=1pt,white](14.95,0)--+(0,21);
+}
+ 
+\newcommand{\newpath}{
+	\path[fill=black](0,0) rectangle +(10,21);
+    \path[fill=black](15,0) rectangle +(10,21);
+}
+\newcommand{\newpathcombo}{
+	\path[fill=white](0,0) rectangle +(10,21);
+	\path[fill=black](15,0) rectangle +(10,21);
+}
+\newcommand{\newslide}{
+	\end{tikzpicture}\newframe\begin{tikzpicture}[scale=0.4]
+	\newpath
+}
+
+%=====================================Y============================================
+\newcommand{\y}[4]{
+	\ifthenelse{#4>0}{
+		\setcounter{x}{15}
+	}{
+		\setcounter{x}{0}
+	}
+	\ifthenelse{#3>0}{
+		\ifthenelse{#3>1}{
+			\ifthenelse{#3>2}{%3 - 270°
+			\setcounter{x}{\thex+#1}\setcounter{y}{#2+1}
+			}{%2 - 180
+			\setcounter{x}{\thex+#1+1}\setcounter{y}{#2+1}
+			}
+			}{%1 - 90°
+			\setcounter{x}{\thex+#1+1}\setcounter{y}{#2+1}
+			}
+			}{%=0
+			\setcounter{x}{\thex+#1+1}\setcounter{y}{#2}
+			}
+	
+	\begin{scope}[xshift=\thex cm,yshift=\they cm]
+	\ifthenelse{#3>0}{
+		\ifthenelse{#3>1}{
+		\ifthenelse{#3>2}{%3 - 270°
+		\shadedraw[ball color=blue!10!,draw=white](0,0)rectangle+(1,1);
+		\shadedraw[ball color=blue!10!,draw=white](0,-1)rectangle+(1,1);
+		\shadedraw[ball color=blue!10!,draw=white](1,0)rectangle+(1,1);
+		\shadedraw[ball color=blue!10!,draw=white](0,1)rectangle+(1,1);
+		}{%2 - 180°
+		\shadedraw[ball color=blue!10!,draw=white](0,0)rectangle+(1,1);
+		\shadedraw[ball color=blue!10!,draw=white](0,-1)rectangle+(1,1);
+		\shadedraw[ball color=blue!10!,draw=white](1,0)rectangle+(1,1);
+		\shadedraw[ball color=blue!10!,draw=white](-1,0)rectangle+(1,1);
+		}
+		}{%1 - 90°
+		\shadedraw[ball color=blue!10!,draw=white](0,0)rectangle+(1,1);
+		\shadedraw[ball color=blue!10!,draw=white](0,-1)rectangle+(1,1);
+		\shadedraw[ball color=blue!10!,draw=white](0,1)rectangle+(1,1);
+		\shadedraw[ball color=blue!10!,draw=white](-1,0)rectangle+(1,1);				
+		}
+		}{%=0
+		\shadedraw[ball color=blue!10!,draw=white](0,0)rectangle+(1,1);
+		\shadedraw[ball color=blue!10!,draw=white](1,0)rectangle+(1,1);
+		\shadedraw[ball color=blue!10!,draw=white](0,1)rectangle+(1,1);
+		\shadedraw[ball color=blue!10!,draw=white](-1,0)rectangle+(1,1);
+		}
+\end{scope}
+}
+%=====================================Z============================================
+\newcommand{\z}[4]{
+	\ifthenelse{#4>0}{
+		\setcounter{x}{15}
+	}{
+		\setcounter{x}{0}
+	}
+	\ifthenelse{#3>0}{%1 - 90°
+			\setcounter{x}{\thex+#1+1}\setcounter{y}{#2+1}
+	}{%0=0°
+		\setcounter{x}{\thex+#1+1}\setcounter{y}{#2}
+	}
+	
+	\begin{scope}[xshift=\thex cm,yshift=\they cm]
+		\ifthenelse{#3>0}{
+\shadedraw[ball color=red,draw=white](0,0)rectangle+(1,1);
+\shadedraw[ball color=red,draw=white](-1,-1)rectangle+(1,1);
+\ifthenelse{\they>19}{}{%impossibilita peça sai do path
+\shadedraw[ball color=red,draw=white](0,1)rectangle+(1,1);
+}	
+\shadedraw[ball color=red,draw=white](-1,0)rectangle+(1,1);				
+			
+	}{%=0
+\shadedraw[ball color=red,draw=white](0,0)rectangle+(1,1);
+\shadedraw[ball color=red,draw=white](1,0)rectangle+(1,1);
+\shadedraw[ball color=red,draw=white](0,1)rectangle+(1,1);
+\shadedraw[ball color=red,draw=white](-1,1)rectangle+(1,1);
+		}
+	\end{scope}
+}
+%=====================================L============================================
+\newcommand{\newL}[4]{
+	\ifthenelse{#4>0}{
+		\setcounter{x}{15}
+	}{
+		\setcounter{x}{0}
+	}
+	\ifthenelse{#3>0}{
+		\ifthenelse{#3>1}{
+			\ifthenelse{#3>2}{%3 - 270°
+				\setcounter{x}{\thex+#1+1}\setcounter{y}{#2}
+			}{%2 - 180
+				\setcounter{x}{\thex+#1+1}\setcounter{y}{#2}
+			}
+		}{%1 - 90°
+			\setcounter{x}{\thex+#1+1}\setcounter{y}{#2}
+		}
+	}{%=0
+		\setcounter{x}{\thex+#1+1}\setcounter{y}{#2+1}
+	}
+	
+	\begin{scope}[xshift=\thex cm,yshift=\they cm]
+	\ifthenelse{#3>0}{
+		\ifthenelse{#3>1}{
+			\ifthenelse{#3>2}{%3 - 270°
+			\shadedraw[ball color=red,draw=white](0,0)rectangle+(1,1);
+			\shadedraw[ball color=red,draw=white](0,1)rectangle+(1,1);
+			\shadedraw[ball color=red,draw=white](0,2)rectangle+(1,1);
+			\shadedraw[ball color=red,draw=white](-1,2)rectangle+(1,1);	
+			}{%2 - 180°
+				\shadedraw[ball color=red,draw=white](0,0)rectangle+(1,1);
+				\shadedraw[ball color=red,draw=white](1,0)rectangle+(1,1);
+				\shadedraw[ball color=red,draw=white](1,1)rectangle+(1,1);
+				\shadedraw[ball color=red,draw=white](-1,0)rectangle+(1,1);
+			}
+		}{%1 - 90°
+			\shadedraw[ball color=red,draw=white](0,0)rectangle+(1,1);
+			\shadedraw[ball color=red,draw=white](-1,2)rectangle+(1,1);
+			\shadedraw[ball color=red,draw=white](-1,1)rectangle+(1,1);
+			\shadedraw[ball color=red,draw=white](-1,0)rectangle+(1,1);	
+		}
+	}{%=0
+		\shadedraw[ball color=red,draw=white](0,0)rectangle+(1,1);
+		\shadedraw[ball color=red,draw=white](1,0)rectangle+(1,1);
+		\shadedraw[ball color=red,draw=white](-1,-1)rectangle+(1,1);
+		\shadedraw[ball color=red,draw=white](-1,0)rectangle+(1,1);
+	}
+	\end{scope}
+}
+%====================================newLinverse===============================
+\newcommand{\newLinverse}[4]{
+	\ifthenelse{#4>0}{
+		\setcounter{x}{15}
+	}{
+		\setcounter{x}{0}
+	}
+	\ifthenelse{#3>0}{
+		\ifthenelse{#3>1}{
+			\ifthenelse{#3>2}{%3 - 270°
+				\setcounter{x}{\thex+#1}\setcounter{y}{#2}
+			}{%2 - 180
+				\setcounter{x}{\thex+#1+1}\setcounter{y}{#2}
+			}
+		}{%1 - 90°
+			\setcounter{x}{\thex+#1+2}\setcounter{y}{#2}
+		}
+	}{%=0
+		\setcounter{x}{\thex+#1+1}\setcounter{y}{#2+1}
+	}
+	
+	\begin{scope}[xshift=\thex cm,yshift=\they cm]
+	\ifthenelse{#3>0}{
+		\ifthenelse{#3>1}{
+			\ifthenelse{#3>2}{%3 - 270°
+				\shadedraw[ball color=blue,draw=white](0,0)rectangle+(1,1);
+				\shadedraw[ball color=blue,draw=white](0,1)rectangle+(1,1);
+				\shadedraw[ball color=blue,draw=white](0,2)rectangle+(1,1);
+				\shadedraw[ball color=blue,draw=white](1,2)rectangle+(1,1);	
+			}{%2 - 180°
+				\shadedraw[ball color=blue,draw=white](0,0)rectangle+(1,1);
+				\shadedraw[ball color=blue,draw=white](1,0)rectangle+(1,1);
+				\shadedraw[ball color=blue,draw=white](-1,1)rectangle+(1,1);
+				\shadedraw[ball color=blue,draw=white](-1,0)rectangle+(1,1);
+			}
+		}{%1 - 90°
+			\shadedraw[ball color=blue,draw=white](-2,0)rectangle+(1,1);
+			\shadedraw[ball color=blue,draw=white](-1,2)rectangle+(1,1);
+			\shadedraw[ball color=blue,draw=white](-1,1)rectangle+(1,1);
+			\shadedraw[ball color=blue,draw=white](-1,0)rectangle+(1,1);	
+		}
+	}{%=0
+		\shadedraw[ball color=blue,draw=white](0,0)rectangle+(1,1);
+		\shadedraw[ball color=blue,draw=white](1,0)rectangle+(1,1);
+		\shadedraw[ball color=blue,draw=white](1,-1)rectangle+(1,1);
+		\shadedraw[ball color=blue,draw=white](-1,0)rectangle+(1,1);
+	}
+	\end{scope}
+}
+%=====================================Q============================================
+\newcommand{\Q}[4]{
+	\ifthenelse{#4>0}{
+		\setcounter{x}{15}
+	}{
+		\setcounter{x}{0}
+	}
+	\setcounter{x}{\thex+#1}\setcounter{y}{#2}
+	
+	\begin{scope}[xshift=\thex cm,yshift=\they cm]
+		\shadedraw[ball color=blue!10!,draw=white](0,0)rectangle+(1,1);
+		\shadedraw[ball color=blue!10!,draw=white](0,1)rectangle+(1,1);
+		\shadedraw[ball color=blue!10!,draw=white](1,0)rectangle+(1,1);
+		\shadedraw[ball color=blue!10!,draw=white](1,1)rectangle+(1,1);		
+	\end{scope}
+}
+%=====================================I============================================
+\newcommand{\I}[4]{
+	\ifthenelse{#4>0}{
+		\setcounter{jogador}{15}
+	}{
+		\setcounter{jogador}{0}
+	}
+	\setcounter{x}{\thejogador}
+	\ifthenelse{#3>0}{%1 - 90°
+		\setcounter{x}{\thex+#1}\setcounter{y}{#2+1}
+	}{%0=0°
+		\setcounter{x}{\thex+#1+1}\setcounter{y}{#2}
+	}
+	
+	\begin{scope}[xshift=\thex cm,yshift=\they cm]
+	\ifthenelse{#3>0}{
+\shadedraw[ball color=blue!10!,draw=white](0,0)rectangle+(1,1);
+\shadedraw[ball color=blue!10!,draw=white](0,-1)rectangle+(1,1);
+\shadedraw[ball color=blue!10!,draw=white](0,1)rectangle+(1,1);
+\ifthenelse{\they>18}{}{
+\shadedraw[ball color=blue!10!,draw=white](0,2)rectangle+(1,1);
+}
+	}{%=0
+\shadedraw[ball color=blue!10!,draw=white](0,0)rectangle+(1,1);
+\shadedraw[ball color=blue!10!,draw=white](1,0)rectangle+(1,1);
+\shadedraw[ball color=blue!10!,draw=white](2,0)rectangle+(1,1);
+\shadedraw[ball color=blue!10!,draw=white](-1,0)rectangle+(1,1);
+	}
+	\end{scope}
+}
+%=====================================S========================================
+\newcommand{\newS}[4]{
+	\ifthenelse{#4>0}{
+		\setcounter{x}{15}
+	}{
+		\setcounter{x}{0}
+	}
+	\ifthenelse{#3>0}{%1 - 90°
+		\setcounter{x}{\thex+#1+1}\setcounter{y}{#2+1}
+	}{%0=0°
+		\setcounter{x}{\thex+#1+1}\setcounter{y}{#2}
+	}
+	
+	\begin{scope}[xshift=\thex cm,yshift=\they cm]
+	\ifthenelse{#3>0}{
+		\shadedraw[ball color=blue,draw=white](0,0)rectangle+(1,1);
+		\shadedraw[ball color=blue,draw=white](0,-1)rectangle+(1,1);
+		\ifthenelse{\they>19}{}{%impossibilita peça sai do path
+			\shadedraw[ball color=blue,draw=white](-1,1)rectangle+(1,1);
+		}	
+		\shadedraw[ball color=blue,draw=white](-1,0)rectangle+(1,1);				
+		
+	}{%=0
+		\shadedraw[ball color=blue,draw=white](0,0)rectangle+(1,1);
+		\shadedraw[ball color=blue,draw=white](1,1)rectangle+(1,1);
+		\shadedraw[ball color=blue,draw=white](0,1)rectangle+(1,1);
+		\shadedraw[ball color=blue,draw=white](-1,0)rectangle+(1,1);
+	}
+	\end{scope}
+}
+
+%==================================eraser========================================
+\newcommand{\eraser}[6]{
+	\ifthenelse{#5>0}{
+		\setcounter{x}{15}
+	}{
+		\setcounter{x}{0}
+	}
+%	\setcounter{x}{\thex+#1}\setcounter{y}{#2}
+	\ifthenelse{#6>0}{
+		\ifthenelse{#6>1}{%debug
+			\filldraw[color=black,draw=black](\thex+#1+0.04,#2+0.05)rectangle(\thex+#1+#3-0.04,#2+#4-0.05);
+		}{
+			\filldraw[color=white,draw=white](\thex+#1+0.04,#2+0.05)rectangle(\thex+#1+#3-0.04,#2+#4-0.05);
+		}
+	}{
+	\filldraw[color=black,draw=black](\thex+#1+0.04,#2+0.05)rectangle(\thex+#1+#3-0.04,#2+#4-0.05);
+	}
+
+}
+
+
+
+%=====================================SAFES========================================
+\newcommand{\safea}{\z{0}{00}{1}{0}\z{0}{00}{1}{1}}
+\newcommand{\safeb}{\newL{1}{00}{2}{0}\newL{1}{00}{2}{1}\safea}
+\newcommand{\safec}{\Q{4}{0}{0}{0}\Q{4}{0}{0}{1}\safeb}
+\newcommand{\safed}{\newL{2}{01}{0}{0}\newL{6}{00}{2}{1}\safec}
+\newcommand{\safee}{\I{0}{02}{1}{0}\I{0}{02}{1}{1}\safed}
+\newcommand{\safef}{\Q{6}{00}{0}{0}\Q{6}{01}{0}{1}\safee}
+\newcommand{\safeg}{\newS{4}{02}{1}{0}\newS{4}{02}{0}{1}\safef}
+\newcommand{\safeh}{\y{1}{03}{0}{0}\y{3}{02}{3}{1}\safeg}
+\newcommand{\safei}{\newL{7}{00}{3}{0}\newL{1}{01}{3}{1}\safeh}
+\newcommand{\safej}{\z{6}{02}{1}{0}\z{3}{04}{0}{1}\safei}
+\newcommand{\safek}{\newL{0}{04}{3}{0}\newL{1}{04}{1}{1}\safej}
+\newcommand{\safel}{\I{8}{03}{1}{0}\I{0}{06}{1}{1}\safek}
+\newcommand{\safem}{\Q{5}{04}{0}{0}\Q{8}{02}{0}{1}\safel}
+\newcommand{\safen}{\safem\eraser{0}{0}{10}{11}{1}{0}\fixborderbug
+	\Q{6}{0}{0}{1}\I{6}{2}{0}{1}\newS{4}{1}{0}{1}\z{0}{0}{0}{1}\newL{0}{0}{0}{1}\newL{1}{0}{2}{1}\Q{4}{0}{0}{1}\I{4}{1}{0}{1}\newL{6}{0}{2}{1}\I{0}{2}{1}{1}\I{0}{5}{1}{1}\y{2}{2}{0}{1}\newL{1}{2}{1}{1}\newL{1}{3}{1}{1}\z{3}{3}{0}{1}\eraser{7}{2}{1}{1.2}{1}{0}}
+\newcommand{\safeo}{\newL{2}{06}{2}{0}\y{2}{04}{2}{0}\safen\y{6}{02}{2}{1}\eraser{0}{0}{10}{14}{1}{0}\fixborderbug	\I{0}{0}{1}{1}\I{0}{4}{1}{1}\z{0}{0}{0}{1}\z{2}{0}{0}{1}\z{4}{0}{0}{1}\z{6}{0}{0}{1}\newL{0}{0}{0}{1}\Q{7}{1}{0}{1}\newL{6}{0}{0}{1}\Q{6}{1}{0}{1}\Q{4}{0}{0}{1}\I{3}{2}{0}{1}\z{3}{2}{0}{1}\newL{1}{2}{1}{1}
+}
+\newcommand{\safep}{\newL{0}{07}{1}{0}\safeo\newL{2}{03}{0}{1}}
+\newcommand{\safeq}{
+	\z{5}{0}{0}{0}
+	\Q{0}{0}{0}{0}\Q{2}{0}{0}{0}\Q{4}{0}{0}{0}\Q{5}{0}{0}{0}
+	\I{8}{0}{1}{0}\newL{0}{0}{3}{0}\newL{0}{3}{1}{0}
+	\newS{3}{0}{1}{0}\newL{2}{2}{2}{0}\I{3}{1}{0}{0}
+	\newL{0}{0}{1}{1}\newL{1}{0}{1}{1}\newL{2}{0}{1}{1}\newL{3}{0}{1}{1}\newL{7}{0}{0}{1}\newL{4}{0}{1}{1}\I{4}{0}{0}{1}\newL{6}{0}{2}{1}\I{0}{1}{1}{1}\I{0}{2}{1}{1}
+	\eraser{6}{1}{2}{2}{1}{0}
+}
+\newcommand{\safer}{\safeq\eraser{7}{3}{3}{1.5}{0}{0}}
+%=================================DOCUMENT======================================
+
+\begin{document}
+\begin{animateinline}[loop]{20}
+\begin{tikzpicture}[scale=0.4]
+
+\newpath
+
+\newslide\z{4}{19}{0}{0}\z{4}{19}{0}{1}
+\newslide\z{4}{19}{0}{0}\z{4}{19}{0}{1}
+\newslide\z{3}{19}{0}{0}\z{3}{19}{0}{1}
+\newslide\z{3}{19}{0}{0}\z{3}{19}{0}{1}
+\newslide\z{2}{19}{0}{0}\z{2}{19}{1}{1}
+\newslide\z{2}{19}{0}{0}\z{2}{19}{1}{1}
+\newslide\z{1}{19}{0}{0}\z{1}{19}{1}{1}
+\newslide\z{1}{19}{0}{0}\z{1}{19}{1}{1}
+\newslide\z{1}{19}{1}{0}\z{0}{19}{1}{1}
+\newslide\z{1}{19}{1}{0}\z{0}{19}{1}{1}
+\newslide\z{0}{19}{1}{0}\z{0}{19}{1}{1}
+\newslide\z{0}{19}{1}{0}\z{0}{19}{1}{1}
+\newslide\z{0}{18}{1}{0}\z{0}{18}{1}{1}
+\newslide\z{0}{17}{1}{0}\z{0}{17}{1}{1}
+\newslide\z{0}{16}{1}{0}\z{0}{16}{1}{1}
+\newslide\z{0}{15}{1}{0}\z{0}{15}{1}{1}
+\newslide\z{0}{14}{1}{0}\z{0}{15}{1}{1}
+\newslide\z{0}{13}{1}{0}\z{0}{15}{1}{1}
+\newslide\z{0}{13}{1}{0}\z{0}{14}{1}{1}
+\newslide\z{0}{13}{1}{0}\z{0}{13}{1}{1}
+\newslide\z{0}{12}{1}{0}\z{0}{13}{1}{1}
+\newslide\z{0}{11}{1}{0}\z{0}{13}{1}{1}
+\newslide\z{0}{11}{1}{0}\z{0}{13}{1}{1}
+\newslide\z{0}{11}{1}{0}\z{0}{13}{1}{1} 
+\newslide\z{0}{11}{1}{0}\z{0}{12}{1}{1}
+\newslide\z{0}{11}{1}{0}\z{0}{11}{1}{1}
+\newslide\z{0}{10}{1}{0}\z{0}{11}{1}{1}
+\newslide\z{0}{09}{1}{0}\z{0}{11}{1}{1}
+\newslide\z{0}{09}{1}{0}\z{0}{10}{1}{1}
+\newslide\z{0}{09}{1}{0}\z{0}{09}{1}{1}
+\newslide\z{0}{08}{1}{0}\z{0}{09}{1}{1}
+\newslide\z{0}{07}{1}{0}\z{0}{09}{1}{1}
+\newslide\z{0}{07}{1}{0}\z{0}{08}{1}{1}
+\newslide\z{0}{07}{1}{0}\z{0}{07}{1}{1}
+\newslide\z{0}{06}{1}{0}\z{0}{07}{1}{1}
+\newslide\z{0}{05}{1}{0}\z{0}{07}{1}{1}
+\newslide\z{0}{05}{1}{0}\z{0}{06}{1}{1}
+\newslide\z{0}{05}{1}{0}\z{0}{05}{1}{1}
+\newslide\z{0}{04}{1}{0}\z{0}{05}{1}{1}
+\newslide\z{0}{03}{1}{0}\z{0}{05}{1}{1}
+\newslide\z{0}{03}{1}{0}\z{0}{04}{1}{1}
+\newslide\z{0}{03}{1}{0}\z{0}{03}{1}{1}
+\newslide\z{0}{02}{1}{0}\z{0}{03}{1}{1}
+\newslide\z{0}{01}{1}{0}\z{0}{03}{1}{1}
+\newslide\z{0}{01}{1}{0}\z{0}{02}{1}{1}
+\newslide\z{0}{01}{1}{0}\z{0}{01}{1}{1}
+\newslide\z{0}{00}{1}{0}\z{0}{01}{1}{1}
+\newslide\z{0}{00}{1}{0}\z{0}{01}{1}{1}
+\newslide\z{0}{00}{1}{0}\z{0}{00}{1}{1}
+
+\newslide\newL{3}{19}{0}{0}\newL{4}{19}{0}{1}\safea
+\newslide\newL{3}{17}{0}{0}\newL{3}{18}{0}{1}\safea
+\newslide\newL{2}{17}{0}{0}\newL{3}{17}{0}{1}\safea
+\newslide\newL{2}{17}{0}{0}\newL{2}{17}{3}{1}\safea
+\newslide\newL{2}{16}{0}{0}\newL{2}{16}{3}{1}\safea
+\newslide\newL{3}{15}{1}{0}\newL{2}{15}{3}{1}\safea
+\newslide\newL{3}{14}{1}{0}\newL{2}{14}{3}{1}\safea
+\newslide\newL{3}{13}{1}{0}\newL{2}{14}{2}{1}\safea
+\newslide\newL{2}{13}{2}{0}\newL{2}{13}{2}{1}\safea
+\newslide\newL{2}{12}{2}{0}\newL{2}{12}{2}{1}\safea
+\newslide\newL{2}{11}{2}{0}\newL{2}{12}{2}{1}\safea
+\newslide\newL{2}{11}{2}{0}\newL{2}{11}{2}{1}\safea
+\newslide\newL{2}{10}{2}{0}\newL{2}{11}{2}{1}\safea
+\newslide\newL{2}{10}{2}{0}\newL{2}{10}{2}{1}\safea
+\newslide\newL{2}{09}{2}{0}\newL{2}{10}{2}{1}\safea
+\newslide\newL{2}{09}{2}{0}\newL{2}{09}{2}{1}\safea
+\newslide\newL{2}{08}{2}{0}\newL{2}{09}{2}{1}\safea
+\newslide\newL{2}{08}{2}{0}\newL{2}{08}{2}{1}\safea
+\newslide\newL{2}{07}{2}{0}\newL{2}{08}{2}{1}\safea
+\newslide\newL{2}{07}{2}{0}\newL{2}{07}{2}{1}\safea
+\newslide\newL{2}{06}{2}{0}\newL{2}{07}{2}{1}\safea
+\newslide\newL{2}{06}{2}{0}\newL{2}{06}{2}{1}\safea
+\newslide\newL{2}{05}{2}{0}\newL{2}{06}{2}{1}\safea
+\newslide\newL{2}{05}{2}{0}\newL{2}{05}{2}{1}\safea
+\newslide\newL{2}{04}{2}{0}\newL{2}{05}{2}{1}\safea
+\newslide\newL{2}{04}{2}{0}\newL{2}{04}{2}{1}\safea
+\newslide\newL{2}{03}{2}{0}\newL{2}{04}{2}{1}\safea
+\newslide\newL{2}{03}{2}{0}\newL{2}{03}{2}{1}\safea
+\newslide\newL{2}{02}{2}{0}\newL{2}{03}{2}{1}\safea
+\newslide\newL{2}{02}{2}{0}\newL{2}{02}{2}{1}\safea
+\newslide\newL{2}{01}{2}{0}\newL{2}{02}{2}{1}\safea
+\newslide\newL{2}{01}{2}{0}\newL{2}{01}{2}{1}\safea
+\newslide\newL{1}{00}{2}{0}\newL{2}{01}{2}{1}\safea
+\newslide\newL{1}{00}{2}{0}\newL{1}{00}{2}{1}\safea
+
+\newslide\Q{4}{19}{0}{0}\safeb
+\newslide\Q{4}{19}{0}{0}\Q{4}{19}{0}{1}\safeb
+\newslide\Q{4}{18}{0}{0}\Q{4}{19}{0}{1}\safeb
+\newslide\Q{4}{18}{0}{0}\Q{4}{18}{0}{1}\safeb
+\newslide\Q{4}{17}{0}{0}\Q{4}{18}{0}{1}\safeb
+\newslide\Q{4}{17}{0}{0}\Q{4}{17}{0}{1}\safeb
+\newslide\Q{4}{16}{0}{0}\Q{4}{17}{0}{1}\safeb
+\newslide\Q{4}{16}{0}{0}\Q{4}{16}{0}{1}\safeb
+\newslide\Q{4}{15}{0}{0}\Q{4}{16}{0}{1}\safeb
+\newslide\Q{4}{15}{0}{0}\Q{4}{15}{0}{1}\safeb
+\newslide\Q{4}{14}{0}{0}\Q{4}{15}{0}{1}\safeb
+\newslide\Q{4}{14}{0}{0}\Q{4}{14}{0}{1}\safeb
+\newslide\Q{4}{13}{0}{0}\Q{4}{14}{0}{1}\safeb
+\newslide\Q{4}{13}{0}{0}\Q{4}{13}{0}{1}\safeb
+\newslide\Q{4}{12}{0}{0}\Q{4}{13}{0}{1}\safeb
+\newslide\Q{4}{12}{0}{0}\Q{4}{12}{0}{1}\safeb
+\newslide\Q{4}{11}{0}{0}\Q{4}{12}{0}{1}\safeb
+\newslide\Q{4}{11}{0}{0}\Q{4}{11}{0}{1}\safeb
+\newslide\Q{4}{10}{0}{0}\Q{4}{11}{0}{1}\safeb
+\newslide\Q{4}{10}{0}{0}\Q{4}{10}{0}{1}\safeb
+\newslide\Q{4}{9}{0}{0}\Q{4}{10}{0}{1}\safeb
+\newslide\Q{4}{9}{0}{0}\Q{4}{9}{0}{1}\safeb
+\newslide\Q{4}{8}{0}{0}\Q{4}{9}{0}{1}\safeb
+\newslide\Q{4}{8}{0}{0}\Q{4}{8}{0}{1}\safeb
+\newslide\Q{4}{7}{0}{0}\Q{4}{8}{0}{1}\safeb
+\newslide\Q{4}{7}{0}{0}\Q{4}{7}{0}{1}\safeb
+\newslide\Q{4}{6}{0}{0}\Q{4}{7}{0}{1}\safeb
+\newslide\Q{4}{6}{0}{0}\Q{4}{6}{0}{1}\safeb
+\newslide\Q{4}{5}{0}{0}\Q{4}{6}{0}{1}\safeb
+\newslide\Q{4}{5}{0}{0}\Q{4}{5}{0}{1}\safeb
+\newslide\Q{4}{4}{0}{0}\Q{4}{5}{0}{1}\safeb
+\newslide\Q{4}{4}{0}{0}\Q{4}{4}{0}{1}\safeb
+\newslide\Q{4}{3}{0}{0}\Q{4}{4}{0}{1}\safeb
+\newslide\Q{4}{3}{0}{0}\Q{4}{3}{0}{1}\safeb
+\newslide\Q{4}{2}{0}{0}\Q{4}{3}{0}{1}\safeb
+\newslide\Q{4}{2}{0}{0}\Q{4}{2}{0}{1}\safeb
+\newslide\Q{4}{1}{0}{0}\Q{4}{2}{0}{1}\safeb
+\newslide\Q{4}{1}{0}{0}\Q{4}{1}{0}{1}\safeb
+\newslide\Q{4}{0}{0}{0}\Q{4}{1}{0}{1}\safeb
+\newslide\Q{4}{0}{0}{0}\Q{4}{0}{0}{1}\safeb
+
+\newslide\newL{3}{19}{0}{0}\safec
+\newslide\newL{3}{19}{0}{0}\newL{4}{19}{0}{1}\safec
+\newslide\newL{3}{18}{0}{0}\newL{4}{19}{0}{1}\safec
+\newslide\newL{3}{18}{0}{0}\newL{4}{18}{0}{1}\safec
+\newslide\newL{3}{18}{0}{0}\newL{5}{18}{0}{1}\safec
+\newslide\newL{3}{17}{0}{0}\newL{5}{18}{0}{1}\safec
+\newslide\newL{3}{17}{0}{0}\newL{5}{18}{3}{1}\safec
+\newslide\newL{3}{16}{0}{0}\newL{6}{18}{3}{1}\safec
+\newslide\newL{3}{15}{0}{0}\newL{6}{17}{3}{1}\safec
+\newslide\newL{3}{15}{0}{0}\newL{6}{16}{3}{1}\safec
+\newslide\newL{3}{15}{0}{0}\newL{6}{16}{2}{1}\safec
+\newslide\newL{3}{14}{0}{0}\newL{6}{15}{2}{1}\safec
+\newslide\newL{3}{14}{0}{0}\newL{6}{14}{2}{1}\safec
+\newslide\newL{3}{13}{0}{0}\newL{6}{14}{2}{1}\safec
+\newslide\newL{3}{13}{0}{0}\newL{6}{13}{2}{1}\safec
+\newslide\newL{3}{12}{0}{0}\newL{6}{13}{2}{1}\safec
+\newslide\newL{3}{11}{0}{0}\newL{6}{12}{2}{1}\safec
+\newslide\newL{3}{11}{0}{0}\newL{6}{12}{2}{1}\safec
+\newslide\newL{3}{10}{0}{0}\newL{6}{11}{2}{1}\safec
+\newslide\newL{3}{10}{0}{0}\newL{6}{11}{2}{1}\safec
+\newslide\newL{3}{09}{0}{0}\newL{6}{10}{2}{1}\safec
+\newslide\newL{3}{09}{0}{0}\newL{6}{10}{2}{1}\safec
+\newslide\newL{3}{08}{0}{0}\newL{6}{09}{2}{1}\safec
+\newslide\newL{3}{08}{0}{0}\newL{6}{09}{2}{1}\safec
+\newslide\newL{2}{07}{0}{0}\newL{6}{08}{2}{1}\safec
+\newslide\newL{2}{07}{0}{0}\newL{6}{08}{2}{1}\safec
+\newslide\newL{2}{06}{0}{0}\newL{6}{07}{2}{1}\safec
+\newslide\newL{3}{06}{0}{0}\newL{6}{07}{2}{1}\safec
+\newslide\newL{3}{05}{0}{0}\newL{6}{06}{2}{1}\safec
+\newslide\newL{3}{05}{0}{0}\newL{6}{06}{2}{1}\safec
+\newslide\newL{3}{04}{0}{0}\newL{6}{05}{2}{1}\safec
+\newslide\newL{3}{04}{0}{0}\newL{6}{05}{2}{1}\safec
+\newslide\newL{2}{03}{0}{0}\newL{6}{05}{2}{1}\safec
+\newslide\newL{2}{03}{0}{0}\newL{6}{04}{2}{1}\safec
+\newslide\newL{2}{02}{0}{0}\newL{6}{04}{2}{1}\safec
+\newslide\newL{2}{02}{0}{0}\newL{6}{03}{2}{1}\safec
+\newslide\newL{2}{01}{0}{0}\newL{6}{03}{2}{1}\safec
+\newslide\newL{2}{01}{0}{0}\newL{6}{02}{2}{1}\safec
+\newslide\newL{2}{01}{0}{0}\newL{6}{01}{2}{1}\safec
+\newslide\newL{2}{01}{0}{0}\newL{6}{00}{2}{1}\safec
+\newslide\newL{2}{01}{0}{0}\newL{6}{00}{2}{1}\safec
+
+\newslide\I{3}{20}{0}{0}\safed
+\newslide\I{3}{19}{0}{0}\safed
+\newslide\I{2}{18}{0}{0}\I{2}{20}{0}{1}\safed
+\newslide\I{2}{17}{0}{0}\I{2}{19}{0}{1}\safed
+\newslide\I{3}{16}{1}{0}\I{1}{18}{0}{1}\safed
+\newslide\I{3}{15}{1}{0}\I{1}{17}{0}{1}\safed
+\newslide\I{2}{14}{1}{0}\I{0}{16}{0}{1}\safed
+\newslide\I{2}{13}{1}{0}\I{0}{15}{0}{1}\safed
+\newslide\I{1}{12}{1}{0}\I{1}{14}{1}{1}\safed
+\newslide\I{1}{11}{1}{0}\I{1}{13}{1}{1}\safed
+\newslide\I{1}{10}{1}{0}\I{1}{12}{1}{1}\safed
+\newslide\I{0}{09}{1}{0}\I{0}{11}{1}{1}\safed
+\newslide\I{0}{08}{1}{0}\I{0}{10}{1}{1}\safed
+\newslide\I{0}{07}{1}{0}\I{0}{09}{1}{1}\safed
+\newslide\I{0}{06}{1}{0}\I{0}{08}{1}{1}\safed
+\newslide\I{0}{05}{1}{0}\I{0}{07}{1}{1}\safed
+\newslide\I{0}{04}{1}{0}\I{0}{06}{1}{1}\safed
+\newslide\I{0}{03}{1}{0}\I{0}{05}{1}{1}\safed
+\newslide\I{0}{02}{1}{0}\I{0}{04}{1}{1}\safed
+\newslide\I{0}{02}{1}{0}\I{0}{03}{1}{1}\safed
+\newslide\I{0}{02}{1}{0}\I{0}{02}{1}{1}\safed
+
+\newslide\Q{4}{19}{0}{0}\safee
+\newslide\Q{5}{19}{0}{0}\safee
+\newslide\Q{5}{18}{0}{0}\safee
+\newslide\Q{5}{17}{0}{0}\Q{4}{19}{0}{1}\safee
+\newslide\Q{6}{17}{0}{0}\Q{5}{19}{0}{1}\safee
+\newslide\Q{6}{16}{0}{0}\Q{5}{18}{0}{1}\safee
+\newslide\Q{6}{15}{0}{0}\Q{5}{17}{0}{1}\safee
+\newslide\Q{6}{15}{0}{0}\Q{6}{17}{0}{1}\safee
+\newslide\Q{6}{14}{0}{0}\Q{6}{16}{0}{1}\safee
+\newslide\Q{6}{13}{0}{0}\Q{6}{15}{0}{1}\safee
+\newslide\Q{6}{12}{0}{0}\Q{6}{14}{0}{1}\safee
+\newslide\Q{6}{11}{0}{0}\Q{6}{13}{0}{1}\safee
+\newslide\Q{6}{10}{0}{0}\Q{6}{12}{0}{1}\safee
+\newslide\Q{6}{09}{0}{0}\Q{6}{11}{0}{1}\safee
+\newslide\Q{6}{08}{0}{0}\Q{6}{10}{0}{1}\safee
+\newslide\Q{6}{07}{0}{0}\Q{6}{09}{0}{1}\safee
+\newslide\Q{6}{06}{0}{0}\Q{6}{08}{0}{1}\safee
+\newslide\Q{6}{05}{0}{0}\Q{6}{07}{0}{1}\safee
+\newslide\Q{6}{04}{0}{0}\Q{6}{06}{0}{1}\safee
+\newslide\Q{6}{03}{0}{0}\Q{6}{05}{0}{1}\safee
+\newslide\Q{6}{02}{0}{0}\Q{6}{04}{0}{1}\safee
+\newslide\Q{6}{01}{0}{0}\Q{6}{03}{0}{1}\safee
+\newslide\Q{6}{00}{0}{0}\Q{6}{02}{0}{1}\safee
+\newslide\Q{6}{00}{0}{0}\Q{6}{01}{0}{1}\safee
+\newslide\Q{6}{00}{0}{0}\Q{6}{01}{0}{1}\safee
+
+\newslide\newS{4}{19}{0}{0}\safef
+\newslide\newS{3}{18}{0}{0}\safef
+\newslide\newS{4}{18}{1}{0}\newS{4}{19}{0}{1}\safef
+\newslide\newS{4}{17}{1}{0}\newS{4}{18}{0}{1}\safef
+\newslide\newS{4}{17}{1}{0}\newS{4}{17}{0}{1}\safef
+\newslide\newS{4}{16}{1}{0}\newS{4}{17}{0}{1}\safef
+\newslide\newS{4}{15}{1}{0}\newS{4}{16}{0}{1}\safef
+\newslide\newS{4}{15}{1}{0}\newS{4}{15}{0}{1}\safef
+\newslide\newS{4}{14}{1}{0}\newS{4}{14}{0}{1}\safef
+\newslide\newS{4}{14}{1}{0}\newS{4}{13}{0}{1}\safef
+\newslide\newS{4}{13}{1}{0}\newS{4}{13}{0}{1}\safef
+\newslide\newS{4}{12}{1}{0}\newS{4}{13}{0}{1}\safef
+\newslide\newS{4}{12}{1}{0}\newS{4}{12}{0}{1}\safef
+\newslide\newS{4}{11}{1}{0}\newS{4}{12}{0}{1}\safef
+\newslide\newS{4}{10}{1}{0}\newS{4}{11}{0}{1}\safef
+\newslide\newS{4}{10}{1}{0}\newS{4}{10}{0}{1}\safef
+\newslide\newS{4}{09}{1}{0}\newS{4}{10}{0}{1}\safef
+\newslide\newS{4}{08}{1}{0}\newS{4}{09}{0}{1}\safef
+\newslide\newS{4}{08}{1}{0}\newS{4}{08}{0}{1}\safef
+\newslide\newS{4}{07}{1}{0}\newS{4}{08}{0}{1}\safef
+\newslide\newS{4}{06}{1}{0}\newS{4}{07}{0}{1}\safef
+\newslide\newS{4}{06}{1}{0}\newS{4}{06}{0}{1}\safef
+\newslide\newS{4}{05}{1}{0}\newS{4}{06}{0}{1}\safef
+\newslide\newS{4}{04}{1}{0}\newS{4}{05}{0}{1}\safef
+\newslide\newS{4}{04}{1}{0}\newS{4}{04}{0}{1}\safef
+\newslide\newS{4}{03}{1}{0}\newS{4}{04}{0}{1}\safef
+\newslide\newS{4}{02}{1}{0}\newS{4}{03}{0}{1}\safef
+\newslide\newS{4}{02}{1}{0}\newS{4}{02}{0}{1}\safef
+\newslide\newS{4}{02}{1}{0}\newS{4}{02}{0}{1}\safef
+
+\newslide\y{4}{19}{2}{0}\safeg
+\newslide\y{4}{18}{2}{0}\safeg
+\newslide\y{3}{17}{2}{0}\y{4}{19}{2}{1}\safeg
+\newslide\y{4}{17}{3}{0}\y{4}{18}{2}{1}\safeg
+\newslide\y{4}{16}{3}{0}\y{3}{18}{2}{1}\safeg
+\newslide\y{3}{15}{3}{0}\y{3}{17}{2}{1}\safeg
+\newslide\y{3}{15}{3}{0}\y{3}{16}{2}{1}\safeg
+\newslide\y{3}{14}{3}{0}\y{2}{16}{2}{1}\safeg
+\newslide\y{2}{13}{3}{0}\y{2}{15}{2}{1}\safeg
+\newslide\y{1}{14}{0}{0}\y{3}{14}{3}{1}\safeg
+\newslide\y{1}{13}{0}{0}\y{2}{14}{3}{1}\safeg
+\newslide\y{1}{12}{0}{0}\y{2}{13}{3}{1}\safeg
+\newslide\y{1}{12}{0}{0}\y{2}{12}{3}{1}\safeg
+\newslide\y{1}{11}{0}{0}\y{2}{12}{3}{1}\safeg
+\newslide\y{1}{10}{0}{0}\y{2}{11}{3}{1}\safeg
+\newslide\y{1}{09}{0}{0}\y{2}{11}{3}{1}\safeg
+\newslide\y{1}{08}{0}{0}\y{2}{10}{3}{1}\safeg
+\newslide\y{1}{08}{0}{0}\y{2}{09}{3}{1}\safeg
+\newslide\y{1}{07}{0}{0}\y{3}{08}{3}{1}\safeg
+\newslide\y{1}{06}{0}{0}\y{3}{07}{3}{1}\safeg
+\newslide\y{1}{06}{0}{0}\y{3}{06}{3}{1}\safeg
+\newslide\y{1}{05}{0}{0}\y{3}{06}{3}{1}\safeg
+\newslide\y{1}{04}{0}{0}\y{3}{05}{3}{1}\safeg
+\newslide\y{1}{04}{0}{0}\y{3}{04}{3}{1}\safeg
+\newslide\y{1}{03}{0}{0}\y{3}{04}{3}{1}\safeg
+\newslide\y{1}{03}{0}{0}\y{3}{03}{3}{1}\safeg
+\newslide\y{1}{03}{0}{0}\y{3}{02}{3}{1}\safeg
+\newslide\y{1}{03}{0}{0}\y{3}{02}{3}{1}\safeg
+
+\newslide\newL{5}{19}{0}{0}\safeh
+\newslide\newL{5}{18}{0}{0}\safeh
+\newslide\newL{5}{18}{0}{0}\newL{4}{19}{0}{1}\safeh
+\newslide\newL{6}{17}{3}{0}\newL{4}{19}{0}{1}\safeh
+\newslide\newL{6}{16}{3}{0}\newL{4}{18}{0}{1}\safeh
+\newslide\newL{6}{16}{3}{0}\newL{3}{17}{0}{1}\safeh
+\newslide\newL{7}{15}{3}{0}\newL{3}{17}{0}{1}\safeh
+\newslide\newL{7}{15}{3}{0}\newL{2}{16}{0}{1}\safeh
+\newslide\newL{7}{14}{3}{0}\newL{2}{15}{0}{1}\safeh
+\newslide\newL{7}{13}{3}{0}\newL{2}{14}{3}{1}\safeh
+\newslide\newL{7}{12}{3}{0}\newL{2}{13}{3}{1}\safeh
+\newslide\newL{7}{12}{3}{0}\newL{2}{13}{3}{1}\safeh
+\newslide\newL{7}{11}{3}{0}\newL{2}{12}{3}{1}\safeh
+\newslide\newL{7}{10}{3}{0}\newL{2}{11}{3}{1}\safeh
+\newslide\newL{7}{10}{3}{0}\newL{2}{11}{3}{1}\safeh
+\newslide\newL{7}{09}{3}{0}\newL{2}{10}{3}{1}\safeh
+\newslide\newL{7}{08}{3}{0}\newL{2}{09}{3}{1}\safeh
+\newslide\newL{7}{08}{3}{0}\newL{2}{09}{3}{1}\safeh
+\newslide\newL{7}{07}{3}{0}\newL{1}{08}{3}{1}\safeh
+\newslide\newL{7}{06}{3}{0}\newL{1}{07}{3}{1}\safeh
+\newslide\newL{7}{06}{3}{0}\newL{1}{07}{3}{1}\safeh
+\newslide\newL{7}{05}{3}{0}\newL{1}{06}{3}{1}\safeh
+\newslide\newL{7}{04}{3}{0}\newL{1}{05}{3}{1}\safeh
+\newslide\newL{7}{04}{3}{0}\newL{1}{05}{3}{1}\safeh
+\newslide\newL{7}{03}{3}{0}\newL{1}{04}{3}{1}\safeh
+\newslide\newL{7}{02}{3}{0}\newL{1}{03}{3}{1}\safeh
+\newslide\newL{7}{02}{3}{0}\newL{1}{03}{3}{1}\safeh
+\newslide\newL{7}{01}{3}{0}\newL{1}{02}{3}{1}\safeh
+\newslide\newL{7}{00}{3}{0}\newL{1}{01}{3}{1}\safeh
+\newslide\newL{7}{00}{3}{0}\newL{1}{01}{3}{1}\safeh
+\newslide\newL{7}{00}{3}{0}\newL{1}{01}{3}{1}\safeh
+
+\newslide\z{4}{19}{0}{0}\safei
+\newslide\z{4}{18}{0}{0}\z{4}{19}{0}{1}\safei
+\newslide\z{5}{17}{1}{0}\z{4}{19}{0}{1}\safei
+\newslide\z{5}{17}{1}{0}\z{4}{18}{0}{1}\safei
+\newslide\z{5}{16}{1}{0}\z{4}{17}{0}{1}\safei
+\newslide\z{5}{15}{1}{0}\z{4}{17}{0}{1}\safei
+\newslide\z{5}{15}{1}{0}\z{3}{16}{0}{1}\safei
+\newslide\z{5}{14}{1}{0}\z{3}{16}{0}{1}\safei
+\newslide\z{6}{14}{1}{0}\z{3}{15}{0}{1}\safei
+\newslide\z{6}{13}{1}{0}\z{3}{14}{0}{1}\safei
+\newslide\z{6}{12}{1}{0}\z{3}{14}{0}{1}\safei
+\newslide\z{6}{12}{1}{0}\z{3}{13}{0}{1}\safei
+\newslide\z{6}{11}{1}{0}\z{3}{12}{0}{1}\safei
+\newslide\z{6}{10}{1}{0}\z{3}{11}{0}{1}\safei
+\newslide\z{6}{10}{1}{0}\z{3}{10}{0}{1}\safei
+\newslide\z{6}{09}{1}{0}\z{3}{10}{0}{1}\safei
+\newslide\z{6}{09}{1}{0}\z{3}{09}{0}{1}\safei
+\newslide\z{6}{08}{1}{0}\z{3}{08}{0}{1}\safei
+\newslide\z{6}{07}{1}{0}\z{3}{08}{0}{1}\safei
+\newslide\z{6}{07}{1}{0}\z{3}{07}{0}{1}\safei
+\newslide\z{6}{06}{1}{0}\z{3}{06}{0}{1}\safei
+\newslide\z{6}{05}{1}{0}\z{3}{06}{0}{1}\safei
+\newslide\z{6}{05}{1}{0}\z{3}{05}{0}{1}\safei
+\newslide\z{6}{04}{1}{0}\z{3}{05}{0}{1}\safei
+\newslide\z{6}{03}{1}{0}\z{3}{04}{0}{1}\safei
+\newslide\z{6}{03}{1}{0}\z{3}{04}{0}{1}\safei
+\newslide\z{6}{02}{1}{0}\z{3}{04}{0}{1}\safei
+\newslide\z{6}{02}{1}{0}\z{3}{04}{0}{1}\safei
+
+\newslide\newL{4}{19}{0}{1}\safej
+\newslide\newL{3}{19}{0}{0}\newL{3}{18}{0}{1}\safej
+\newslide\newL{3}{18}{0}{0}\newL{3}{18}{0}{1}\safej
+\newslide\newL{3}{18}{0}{0}\newL{3}{17}{0}{1}\safej
+\newslide\newL{2}{17}{0}{0}\newL{2}{16}{0}{1}\safej
+\newslide\newL{2}{16}{3}{0}\newL{2}{16}{0}{1}\safej
+\newslide\newL{2}{16}{3}{0}\newL{2}{15}{0}{1}\safej
+\newslide\newL{1}{15}{3}{0}\newL{1}{14}{0}{1}\safej
+\newslide\newL{1}{14}{3}{0}\newL{1}{14}{0}{1}\safej
+\newslide\newL{1}{14}{3}{0}\newL{1}{13}{1}{1}\safej
+\newslide\newL{1}{13}{3}{0}\newL{1}{12}{1}{1}\safej
+\newslide\newL{0}{12}{3}{0}\newL{1}{12}{1}{1}\safej
+\newslide\newL{0}{12}{3}{0}\newL{1}{11}{1}{1}\safej
+\newslide\newL{0}{11}{3}{0}\newL{1}{10}{1}{1}\safej
+\newslide\newL{0}{10}{3}{0}\newL{1}{10}{1}{1}\safej
+\newslide\newL{0}{10}{3}{0}\newL{1}{09}{1}{1}\safej
+\newslide\newL{0}{09}{3}{0}\newL{1}{08}{1}{1}\safej
+\newslide\newL{0}{08}{3}{0}\newL{1}{08}{1}{1}\safej
+\newslide\newL{0}{08}{3}{0}\newL{1}{07}{1}{1}\safej
+\newslide\newL{0}{07}{3}{0}\newL{1}{06}{1}{1}\safej
+\newslide\newL{0}{06}{3}{0}\newL{1}{06}{1}{1}\safej
+\newslide\newL{0}{06}{3}{0}\newL{1}{05}{1}{1}\safej
+\newslide\newL{0}{05}{3}{0}\newL{1}{04}{1}{1}\safej
+\newslide\newL{0}{04}{3}{0}\newL{1}{04}{1}{1}\safej
+\newslide\newL{0}{04}{3}{0}\newL{1}{04}{1}{1}\safej
+
+\newslide\I{3}{20}{0}{1}\safek
+\newslide\I{3}{20}{0}{0}\I{2}{20}{0}{1}\safek
+\newslide\I{4}{20}{0}{0}\I{2}{19}{0}{1}\safek
+\newslide\I{6}{18}{1}{0}\I{2}{18}{0}{1}\safek
+\newslide\I{6}{17}{1}{0}\I{1}{18}{0}{1}\safek
+\newslide\I{7}{17}{1}{0}\I{1}{17}{0}{1}\safek
+\newslide\I{7}{16}{1}{0}\I{1}{16}{0}{1}\safek
+\newslide\I{7}{15}{1}{0}\I{0}{16}{0}{1}\safek
+\newslide\I{8}{15}{1}{0}\I{0}{15}{0}{1}\safek
+\newslide\I{8}{14}{1}{0}\I{0}{14}{0}{1}\safek
+\newslide\I{8}{13}{1}{0}\I{1}{13}{1}{1}\safek
+\newslide\I{8}{13}{1}{0}\I{1}{12}{1}{1}\safek
+\newslide\I{8}{12}{1}{0}\I{1}{11}{1}{1}\safek
+\newslide\I{8}{11}{1}{0}\I{0}{11}{1}{1}\safek
+\newslide\I{8}{11}{1}{0}\I{0}{10}{1}{1}\safek
+\newslide\I{8}{10}{1}{0}\I{0}{09}{1}{1}\safek
+\newslide\I{8}{09}{1}{0}\I{0}{09}{1}{1}\safek
+\newslide\I{8}{09}{1}{0}\I{0}{08}{1}{1}\safek
+\newslide\I{8}{08}{1}{0}\I{0}{07}{1}{1}\safek
+\newslide\I{8}{08}{1}{0}\I{0}{07}{1}{1}\safek
+\newslide\I{8}{07}{1}{0}\I{0}{06}{1}{1}\safek
+\newslide\I{8}{06}{1}{0}\I{0}{06}{1}{1}\safek
+\newslide\I{8}{05}{1}{0}\I{0}{06}{1}{1}\safek
+\newslide\I{8}{04}{1}{0}\I{0}{06}{1}{1}\safek
+\newslide\I{8}{03}{1}{0}\I{0}{06}{1}{1}\safek
+\newslide\I{8}{03}{1}{0}\I{0}{06}{1}{1}\safek
+
+\Q{4}{19}{0}{1}\safel
+\newslide\Q{4}{18}{0}{1}\safel
+\newslide\Q{5}{17}{0}{1}\safel
+\newslide\Q{4}{19}{0}{0}\Q{5}{16}{0}{1}\safel
+\newslide\Q{4}{18}{0}{0}\Q{6}{15}{0}{1}\safel
+\newslide\Q{4}{17}{0}{0}\Q{6}{14}{0}{1}\safel
+\newslide\Q{4}{16}{0}{0}\Q{7}{13}{0}{1}\safel
+\newslide\Q{4}{15}{0}{0}\Q{8}{12}{0}{1}\safel
+\newslide\Q{5}{14}{0}{0}\Q{8}{11}{0}{1}\safel
+\newslide\Q{5}{13}{0}{0}\Q{8}{10}{0}{1}\safel
+\newslide\Q{5}{12}{0}{0}\Q{8}{09}{0}{1}\safel
+\newslide\Q{5}{11}{0}{0}\Q{8}{08}{0}{1}\safel
+\newslide\Q{5}{10}{0}{0}\Q{8}{07}{0}{1}\safel
+\newslide\Q{5}{09}{0}{0}\Q{8}{06}{0}{1}\safel
+\newslide\Q{5}{08}{0}{0}\Q{8}{05}{0}{1}\safel
+\newslide\Q{5}{07}{0}{0}\Q{8}{04}{0}{1}\safel
+\newslide\Q{5}{06}{0}{0}\Q{8}{03}{0}{1}\safel
+\newslide\Q{5}{05}{0}{0}\Q{8}{02}{0}{1}\safel
+\newslide\Q{5}{04}{0}{0}\Q{8}{02}{0}{1}\safel
+\newslide\Q{5}{04}{0}{0}\Q{8}{02}{0}{1}\safel\eraser{4}{2}{2}{1}{1}{0}
+
+\newslide
+\y{4}{19}{2}{0}\safem\eraser{3}{2}{4}{1}{1}{0}
+\newslide
+\y{4}{19}{2}{0}\safem\eraser{2}{2}{6}{1}{1}{0}\eraser{7}{2}{1}{2}{1}{0}\fixborderbug
+\newslide
+\y{4}{18}{2}{0}\safem\eraser{2}{2}{6}{1}{1}{0}\eraser{7}{2}{1}{2}{1}{0}\fixborderbug
+\newslide\
+\y{3}{17}{2}{0}\safem\eraser{1}{2}{8}{1}{1}{0}\eraser{7}{2}{1}{2}{1}{0}\fixborderbug
+\newslide
+\y{3}{16}{2}{0}\safem\eraser{1}{2}{8}{1}{1}{0}\eraser{7}{2}{1}{2}{1}{0}\fixborderbug
+\newslide
+\y{3}{16}{2}{0}\safem\eraser{0}{2}{10}{1}{1}{0}\eraser{7}{2}{1}{2}{1}{0}\fixborderbug
+\newslide
+\y{3}{15}{2}{0}\safem\eraser{0}{0}{10}{11}{1}{0}\fixborderbug
+\Q{6}{0}{0}{1}\I{6}{2}{0}{1}\newS{4}{1}{0}{1}\z{0}{0}{0}{1}\newL{0}{0}{0}{1}\newL{1}{0}{2}{1}\Q{4}{0}{0}{1}\I{4}{1}{0}{1}\newL{6}{0}{2}{1}\I{0}{2}{1}{1}\I{0}{5}{1}{1}\y{2}{2}{0}{1}\newL{1}{2}{1}{1}\newL{1}{3}{1}{1}\z{3}{3}{0}{1}\eraser{7}{2}{1}{1.2}{1}{0}
+
+\newslide
+\y{3}{14}{2}{0}\safen
+\newslide\y{3}{14}{2}{0}\safen\y{4}{19}{2}{1}
+\newslide\y{3}{14}{2}{0}\safen\y{4}{18}{2}{1}
+\newslide\y{3}{13}{2}{0}\safen\y{4}{18}{2}{1}
+\newslide\y{3}{13}{2}{0}\safen\y{5}{17}{2}{1}
+\newslide\y{3}{13}{2}{0}\safen\y{5}{16}{2}{1}
+\newslide\y{3}{12}{2}{0}\safen\y{5}{16}{2}{1}
+\newslide\y{2}{11}{2}{0}\safen\y{5}{15}{2}{1}
+\newslide\y{2}{11}{2}{0}\safen\y{5}{14}{2}{1}
+\newslide\y{2}{10}{2}{0}\safen\y{5}{14}{2}{1}
+\newslide\y{2}{09}{2}{0}\safen\y{5}{13}{2}{1}
+\newslide\y{2}{09}{2}{0}\safen\y{5}{12}{2}{1}
+\newslide\y{2}{08}{2}{0}\safen\y{5}{11}{2}{1}
+\newslide\y{2}{07}{2}{0}\safen\y{5}{10}{2}{1}
+\newslide\y{2}{06}{2}{0}\safen\y{5}{09}{2}{1}
+\newslide\y{2}{05}{2}{0}\safen\y{5}{08}{2}{1}
+\newslide\y{2}{05}{2}{0}\safen\y{6}{07}{2}{1}
+\newslide\y{2}{04}{2}{0}\safen\y{6}{06}{2}{1}
+\newslide\y{2}{04}{2}{0}\safen\y{6}{05}{2}{1}
+
+\newslide\newL{4}{19}{0}{0}\y{2}{04}{2}{0}\safen\y{6}{04}{2}{1}
+\newslide\newL{4}{19}{0}{0}\y{2}{04}{2}{0}\safen\y{6}{03}{2}{1}
+\newslide\newL{4}{18}{0}{0}\y{2}{04}{2}{0}\safen\y{6}{03}{2}{1}
+\newslide\newL{3}{17}{0}{0}\y{2}{04}{2}{0}\safen\y{6}{02}{2}{1}
+\newslide\newL{4}{17}{1}{0}\y{2}{04}{2}{0}\safen\y{6}{02}{2}{1}
+\newslide\newL{4}{16}{1}{0}\y{2}{04}{2}{0}\safen\y{6}{02}{2}{1}
+\newslide\newL{3}{15}{1}{0}\y{2}{04}{2}{0}\safen\y{6}{02}{2}{1}
+\newslide\newL{3}{14}{1}{0}\y{2}{04}{2}{0}\safen\y{6}{02}{2}{1}\eraser{4}{2}{2}{1}{1}{0}
+\newslide\newL{2}{14}{2}{0}\y{2}{04}{2}{0}\safen\y{6}{02}{2}{1}\eraser{4}{2}{2}{1}{1}{0}
+\newslide\newL{2}{14}{2}{0}\y{2}{04}{2}{0}\safen\y{6}{02}{2}{1}\eraser{3}{2}{4}{1}{1}{0}
+\newslide\newL{2}{13}{2}{0}\y{2}{04}{2}{0}\safen\y{6}{02}{2}{1}\eraser{3}{2}{4}{1}{1}{0}
+\newslide\newL{2}{12}{2}{0}\y{2}{04}{2}{0}\safen\y{6}{02}{2}{1}\eraser{2}{2}{6}{1}{1}{0}
+\newslide\newL{2}{11}{2}{0}\y{2}{04}{2}{0}\safen\y{6}{02}{2}{1}\eraser{2}{2}{6}{1}{1}{0}
+\newslide\newL{2}{10}{2}{0}\y{2}{04}{2}{0}\safen\y{6}{02}{2}{1}\eraser{1}{2}{8}{1}{1}{0}
+\newslide\newL{2}{09}{2}{0}\y{2}{04}{2}{0}\safen\y{6}{02}{2}{1}\eraser{0}{2}{10}{1}{1}{0}\eraser{9}{1}{1}{3}{1}{0}\fixborderbug
+\newslide\newL{2}{08}{2}{0}\y{2}{04}{2}{0}\safen\y{6}{02}{2}{1}\eraser{0}{2}{10}{1}{1}{0}\eraser{9}{1}{1}{3}{1}{0}\eraser{0}{8}{1}{2}{1}{0}\fixborderbug
+
+\newslide\newL{2}{07}{2}{0}\y{2}{04}{2}{0}\safen\y{6}{02}{2}{1}\eraser{0}{0}{10}{14}{1}{0}\fixborderbug
+\I{0}{0}{1}{1}\I{0}{4}{1}{1}\z{0}{0}{0}{1}\z{2}{0}{0}{1}\z{4}{0}{0}{1}\z{6}{0}{0}{1}\newL{0}{0}{0}{1}\Q{7}{1}{0}{1}\newL{6}{0}{0}{1}\Q{6}{1}{0}{1}\Q{4}{0}{0}{1}\I{3}{2}{0}{1}\z{3}{2}{0}{1}\newL{1}{2}{1}{1}
+
+\newslide\safeo\newL{4}{19}{0}{1}
+\newslide\safeo\newL{4}{18}{0}{1}
+\newslide\safeo\newL{3}{18}{0}{1}
+\newslide\safeo\newL{3}{17}{0}{1}
+\newslide\safeo\newL{3}{16}{0}{1}
+\newslide\safeo\newL{2}{16}{0}{1}
+\newslide\safeo\newL{2}{15}{0}{1}
+\newslide\safeo\newL{2}{14}{0}{1}
+\newslide\newL{4}{19}{0}{0}\safeo\newL{2}{14}{0}{1}
+\newslide\newL{4}{19}{0}{0}\safeo\newL{2}{13}{0}{1}
+\newslide\newL{4}{18}{0}{0}\safeo\newL{2}{12}{0}{1}
+\newslide\newL{4}{17}{1}{0}\safeo\newL{2}{12}{0}{1}
+\newslide\newL{4}{17}{1}{0}\safeo\newL{2}{11}{0}{1}
+\newslide\newL{3}{16}{1}{0}\safeo\newL{2}{11}{0}{1}
+\newslide\newL{3}{15}{1}{0}\safeo\newL{2}{10}{0}{1}
+\newslide\newL{3}{15}{1}{0}\safeo\newL{2}{09}{0}{1}
+\newslide\newL{2}{14}{1}{0}\safeo\newL{2}{09}{0}{1}
+\newslide\newL{2}{13}{1}{0}\safeo\newL{2}{08}{0}{1}
+\newslide\newL{2}{13}{1}{0}\safeo\newL{2}{07}{0}{1}
+\newslide\newL{1}{12}{1}{0}\safeo\newL{2}{06}{0}{1}
+\newslide\newL{1}{11}{1}{0}\safeo\newL{2}{05}{0}{1}
+\newslide\newL{1}{10}{1}{0}\safeo\newL{2}{04}{0}{1}
+\newslide\newL{1}{10}{1}{0}\safeo\newL{2}{03}{0}{1}
+\newslide\newL{0}{09}{1}{0}\safeo\newL{2}{03}{0}{1}
+\newslide\newL{0}{08}{1}{0}\safeo\newL{2}{03}{0}{1}
+\newslide\newL{0}{07}{1}{0}\safeo\newL{2}{03}{0}{1}
+\newslide\newL{0}{07}{1}{0}\safeo\newL{2}{03}{0}{1}
+
+
+\newslide\safep\newL{4}{19}{0}{1}
+\newslide\safep\newL{5}{18}{0}{1}
+\newslide\safep\I{3}{20}{0}{0}\newL{5}{17}{3}{1}
+\newslide\safep\I{3}{19}{0}{0}\newL{5}{16}{3}{1}
+\newslide\safep\I{4}{18}{0}{0}\newL{6}{15}{3}{1}
+\newslide\safep\I{5}{17}{0}{0}\newL{7}{14}{3}{1}
+\newslide\safep\I{6}{16}{0}{0}\newL{7}{13}{3}{1}
+\newslide\safep\I{8}{14}{1}{0}\newL{8}{12}{3}{1}
+\newslide\safep\I{9}{13}{1}{0}\newL{8}{11}{3}{1}
+\newslide\safep\I{9}{12}{1}{0}\newL{8}{10}{3}{1}
+\newslide\safep\I{9}{11}{1}{0}\newL{8}{09}{3}{1}
+\newslide\safep\I{9}{10}{1}{0}\newL{8}{08}{3}{1}
+\newslide\safep\I{9}{09}{1}{0}\newL{8}{07}{3}{1}
+\newslide\safep\I{9}{08}{1}{0}\newL{8}{06}{3}{1}
+\newslide\safep\I{9}{07}{1}{0}\newL{8}{05}{3}{1}
+\newslide\safep\I{9}{06}{1}{0}\newL{8}{04}{3}{1}
+\newslide\safep\I{9}{05}{1}{0}\newL{8}{03}{3}{1}
+\newslide\safep\I{9}{04}{1}{0}\newL{8}{02}{3}{1}
+\newslide\safep\I{9}{03}{1}{0}\newL{8}{01}{3}{1}
+\newslide\safep\I{9}{02}{1}{0}\newL{8}{01}{3}{1}
+
+\newslide
+\safep\I{9}{01}{1}{0}\newL{8}{01}{3}{1}
+\eraser{4}{1}{2}{2}{1}{2}
+\eraser{5}{2}{1}{1.5}{1}{2}%correcao de bug
+
+\newslide
+\safep\I{9}{00}{1}{0}\newL{8}{01}{3}{1}\eraser{3}{1}{4}{2}{1}{2}
+\eraser{5}{2}{2}{1.5}{1}{2}%correcao de bug
+
+\newslide
+\newpathcombo\safep\I{9}{00}{1}{0}\newL{8}{01}{3}{1}
+\eraser{3}{1}{4}{2}{1}{0}\eraser{5}{2}{2}{1.5}{1}{2}\fixborderbug
+
+Rrepeticao 3x
+\newslide
+\safep\I{9}{00}{1}{0}\newL{8}{01}{3}{1}
+\eraser{3}{1}{4}{2}{1}{0}\eraser{5}{2}{2}{1.5}{1}{2}\fixborderbug
+\newslide
+\newpathcombo
+\safep\I{9}{00}{1}{0}\newL{8}{01}{3}{1}
+\eraser{3}{1}{4}{2}{1}{0}\eraser{5}{2}{2}{1.5}{1}{2}\fixborderbug
+\newslide
+\safep\I{9}{00}{1}{0}\newL{8}{01}{3}{1}
+\eraser{3}{1}{4}{2}{1}{0}\eraser{5}{2}{2}{1.5}{1}{2}\fixborderbug
+
+\newslide
+\safep\I{9}{00}{1}{0}\newL{8}{01}{3}{1}
+\eraser{4}{0}{2}{4}{0}{0}\eraser{2}{1}{6}{2}{1}{0}
+\eraser{5}{2}{3}{1.5}{1}{2}%correcao de bug
+\fixborderbug
+
+%3 vezes
+\newslide
+\newpathcombo
+\safep\I{9}{00}{1}{0}\newL{8}{01}{3}{1}
+\eraser{3}{0}{4}{4}{0}{1}
+\eraser{1}{1}{8}{2}{1}{2}
+\eraser{5}{2}{3}{1.5}{1}{2}%correcao de bug
+\fixborderbug
+\newslide
+\safep\I{9}{00}{1}{0}\newL{8}{01}{3}{1}
+\eraser{3}{0}{4}{4}{0}{0}
+\eraser{1}{1}{8}{2}{1}{2}
+\eraser{5}{2}{3}{1.5}{1}{2}%correcao de bug
+\fixborderbug
+\newslide
+\newpathcombo
+\safep\I{9}{00}{1}{0}\newL{8}{01}{3}{1}
+\eraser{3}{0}{4}{4}{0}{1}
+\eraser{1}{1}{8}{2}{1}{2}
+\eraser{5}{2}{3}{1.5}{1}{2}%correcao de bug
+\fixborderbug
+
+\newslide
+\safep\I{9}{00}{1}{0}\newL{8}{01}{3}{1}
+\eraser{2}{0}{6}{4}{0}{0}
+\eraser{0}{1}{10}{2}{1}{2}
+\eraser{9}{0}{1}{2}{1}{2}
+\eraser{5}{2}{3}{1.5}{1}{2}%correcao de bug
+\fixborderbug
+
+\newslide%3 vezes
+\newpathcombo\safep\I{9}{00}{1}{0}
+\eraser{2}{0}{6}{4}{0}{1}
+\path[fill=black](15,0) rectangle +(10,21);
+\z{0}{0}{1}{1}\z{0}{0}{0}{1}\z{2}{0}{0}{1}\z{4}{0}{0}{1}\z{6}{0}{0}{1}
+\newL{8}{0}{3}{1}\z{1}{2}{0}{1}\newL{2}{2}{2}{1}\newL{1}{2}{2}{1}
+\I{0}{2}{1}{1}\I{0}{3}{1}{1}
+\eraser{0}{1}{10}{1}{1}{0}
+\eraser{5}{1}{3}{2}{1}{0}
+\eraser{9}{0}{1}{1.5}{1}{0}
+\fixborderbug
+
+\newslide%elimina mais uma coluna em path1 - fundo preto
+\safep\I{9}{00}{1}{0}
+\eraser{1}{0}{8}{4}{0}{0}
+\path[fill=black](15,0) rectangle +(10,21);
+\z{0}{0}{1}{1}\z{0}{0}{0}{1}\z{2}{0}{0}{1}\z{4}{0}{0}{1}\z{6}{0}{0}{1}
+\newL{8}{0}{3}{1}\z{1}{2}{0}{1}\newL{2}{2}{2}{1}\newL{1}{2}{2}{1}
+\I{0}{2}{1}{1}\I{0}{3}{1}{1}
+\eraser{0}{1}{10}{1}{1}{0}
+\eraser{5}{1}{3}{2}{1}{0}
+\eraser{9}{0}{1}{1.5}{1}{0}
+\fixborderbug
+
+\newslide%pisca
+\newpathcombo\safep\I{9}{00}{1}{0}
+\eraser{1}{0}{8}{4}{0}{1}
+\path[fill=black](15,0) rectangle +(10,21);
+\z{0}{0}{1}{1}\z{0}{0}{0}{1}\z{2}{0}{0}{1}\z{4}{0}{0}{1}\z{6}{0}{0}{1}
+\newL{8}{0}{3}{1}\z{1}{2}{0}{1}\newL{2}{2}{2}{1}\newL{1}{2}{2}{1}
+\I{0}{2}{1}{1}\I{0}{3}{1}{1}
+\eraser{0}{1}{10}{1}{1}{0}
+\eraser{5}{1}{3}{2}{1}{0}
+\eraser{9}{0}{1}{1.5}{1}{0}
+\fixborderbug
+
+%3 vezes
+\newslide %apaga o reto das linhas em path1 e mantem luz
+\newpathcombo
+\newpathcombo\safep
+\eraser{0}{0}{10}{4}{0}{1}
+\eraser{9.05}{3}{1}{2}{0}{1}
+\path[fill=black](15,0) rectangle +(10,21);
+\z{0}{0}{1}{1}\z{0}{0}{0}{1}\z{2}{0}{0}{1}\z{4}{0}{0}{1}\z{6}{0}{0}{1}
+\newL{8}{0}{3}{1}\z{1}{2}{0}{1}\newL{2}{2}{2}{1}\newL{1}{2}{2}{1}
+\I{0}{2}{1}{1}\I{0}{3}{1}{1}
+\eraser{0}{1}{10}{1}{1}{0}
+\eraser{5}{1}{3}{2}{1}{0}
+\eraser{9}{0}{1}{1.5}{1}{0}
+\fixborderbug
+\newslide%apaga luz
+\safep
+\eraser{0}{0}{10}{4}{0}{0}
+\eraser{9.05}{3}{1}{2}{0}{0}
+\path[fill=black](15,0) rectangle +(10,21);
+\z{0}{0}{1}{1}\z{0}{0}{0}{1}\z{2}{0}{0}{1}\z{4}{0}{0}{1}\z{6}{0}{0}{1}
+\newL{8}{0}{3}{1}\z{1}{2}{0}{1}\newL{2}{2}{2}{1}\newL{1}{2}{2}{1}
+\I{0}{2}{1}{1}\I{0}{3}{1}{1}
+\eraser{0}{1}{10}{1}{1}{0}
+\eraser{5}{1}{3}{2}{1}{0}
+\eraser{9}{0}{1}{1.5}{1}{0}
+\fixborderbug
+
+\newslide%pisca
+\newpathcombo
+\safep
+\eraser{0}{0}{10}{4}{0}{1}
+\eraser{9.05}{3}{1}{2}{0}{1}
+\path[fill=black](15,0) rectangle +(10,21);
+\z{0}{0}{1}{1}\z{0}{0}{0}{1}\z{2}{0}{0}{1}\z{4}{0}{0}{1}\z{6}{0}{0}{1}
+\newL{8}{0}{3}{1}\z{1}{2}{0}{1}\newL{2}{2}{2}{1}\newL{1}{2}{2}{1}
+\I{0}{2}{1}{1}\I{0}{3}{1}{1}
+\eraser{0}{1}{10}{1}{1}{0}
+\eraser{5}{1}{3}{2}{1}{0}
+\eraser{9}{0}{1}{1.5}{1}{0}
+\fixborderbug
+
+\newslide
+\newpathcombo
+\safeq\eraser{7}{3}{3}{1.5}{0}{1}
+
+
+
+\newslide
+\safeq\eraser{7}{3}{3}{1.5}{0}{0}
+
+
+\setcounter{aux}{0}\whiledo{\theaux<10}{
+	\newslide
+	\safer
+\stepcounter{aux}}
+
+
+
+%BCC
+\setcounter{aux}{0}\whiledo{\theaux<5}{\newslide
+\safer\I{3}{20}{0}{0}
+\stepcounter{aux}}
+
+\setcounter{aux}{0}\whiledo{\theaux<5}{\newslide
+\safer\I{3}{19}{0}{0}
+\stepcounter{aux}}
+
+\setcounter{aux}{0}\whiledo{\theaux<5}{\newslide
+\safer\I{3}{18}{0}{0}\Q{4}{19}{0}{0}
+\stepcounter{aux}}
+
+\setcounter{aux}{0}\whiledo{\theaux<5}{\newslide
+	\safer\I{3}{17}{0}{0}\Q{4}{18}{0}{0}
+\stepcounter{aux}}
+
+\setcounter{aux}{0}\whiledo{\theaux<5}{\newslide
+	\safer\I{3}{15}{1}{0}\Q{4}{18}{0}{0}
+\stepcounter{aux}}
+
+\setcounter{aux}{0}\whiledo{\theaux<5}{\newslide
+	\safer\I{3}{14}{1}{0}\Q{4}{17}{0}{0}
+\stepcounter{aux}}
+
+\setcounter{aux}{0}\whiledo{\theaux<5}{\newslide
+	\safer\I{3}{13}{1}{0}\Q{4}{16}{0}{0}\newLinverse{0}{18}{3}{1}
+\stepcounter{aux}}
+
+\setcounter{aux}{0}\whiledo{\theaux<5}{\newslide
+	\safer\I{3}{12}{1}{0}\Q{4}{15}{0}{0}\newLinverse{0}{17}{3}{1}
+\stepcounter{aux}}
+
+\setcounter{aux}{0}\whiledo{\theaux<5}{\newslide
+	\safer\I{3}{11}{1}{0}\Q{4}{14}{0}{0}\newLinverse{-1}{16}{3}{1}\I{3}{20}{0}{0}
+\stepcounter{aux}}
+
+\setcounter{aux}{0}\whiledo{\theaux<5}{\newslide
+	\safer\I{3}{10}{1}{0}\Q{4}{13}{0}{0}\newLinverse{-2}{15}{3}{1}\I{3}{19}{0}{0}
+\newL{4}{19}{0}{1}
+\stepcounter{aux}}
+
+\setcounter{aux}{0}\whiledo{\theaux<5}{\newslide
+	\safer\I{3}{10}{1}{0}\Q{4}{12}{0}{0}\newLinverse{-3}{14}{3}{1}\I{3}{17}{1}{0}
+\newL{4}{18}{0}{1}
+\stepcounter{aux}}
+
+\setcounter{aux}{0}\whiledo{\theaux<5}{\newslide
+	\safer
+\I{3}{10}{1}{0}
+\Q{4}{11}{0}{0}
+\I{3}{16}{1}{0}
+\newLinverse{-3}{13}{2}{1}
+\newL{4}{17}{0}{1}
+\newLinverse{10}{19}{2}{0}
+\newL{0}{19}{0}{1}
+\stepcounter{aux}}
+
+
+\setcounter{aux}{0}\whiledo{\theaux<5}{\newslide
+	\safer
+\I{3}{10}{1}{0}
+\Q{4}{10}{0}{0}\Q{4}{19}{0}{0}
+\I{3}{15}{1}{0}
+\newLinverse{-4}{12}{2}{1}
+\newL{4}{16}{0}{1}
+\newLinverse{11}{18}{2}{0}
+\newL{-1}{18}{0}{1}
+\I{12}{0}{1}{0}
+\I{4}{0}{1}{1}
+\stepcounter{aux}}
+
+\setcounter{aux}{0}\whiledo{\theaux<5}{\newslide
+	\safer
+\I{3}{10}{1}{0}
+\Q{4}{10}{0}{0}
+\Q{4}{18}{0}{0}
+\I{3}{13}{1}{0}
+\newLinverse{-4}{11}{2}{1}
+\newL{4}{15}{0}{1}
+\newLinverse{12}{17}{2}{0}
+\newL{-1}{18}{0}{1}
+\I{12}{2}{1}{0}
+\I{4}{2}{1}{1}
+\stepcounter{aux}}
+
+\setcounter{aux}{0}\whiledo{\theaux<5}{\newslide
+	\safer
+\I{3}{10}{1}{0}
+\Q{4}{10}{0}{0}
+\Q{4}{17}{0}{0}
+\I{3}{12}{1}{0}
+\newLinverse{-4}{10}{2}{1}
+\newL{4}{14}{0}{1}
+\newLinverse{12}{16}{2}{0}
+\newL{-1}{18}{0}{1}
+\I{11}{4}{1}{0}
+\I{4}{4}{1}{1}
+\stepcounter{aux}}
+
+\setcounter{aux}{0}\whiledo{\theaux<5}{\newslide
+	\safer
+\I{3}{10}{1}{0}
+\Q{4}{10}{0}{0}
+\Q{4}{16}{0}{0}
+\I{3}{11}{1}{0}
+\newLinverse{-4}{10}{2}{1}
+\newL{4}{14}{0}{1}
+\newLinverse{12}{17}{2}{0}
+\newL{-2}{18}{0}{1}
+\I{11}{6}{1}{0}
+\I{4}{6}{1}{1}
+\stepcounter{aux}}
+
+\setcounter{aux}{0}\whiledo{\theaux<5}{\newslide
+	\safer
+\I{3}{10}{1}{0}
+\Q{4}{10}{0}{0}
+\Q{4}{15}{0}{0}
+\I{3}{11}{1}{0}
+\newLinverse{-4}{10}{2}{1}
+\newL{4}{13}{0}{1}
+\newLinverse{13}{16}{1}{0}
+\newL{-3}{18}{0}{1}
+\I{11}{8}{1}{0}
+\I{4}{8}{1}{1}
+\stepcounter{aux}}
+
+\setcounter{aux}{0}\whiledo{\theaux<5}{\newslide
+	\safer
+\I{3}{10}{1}{0}
+\Q{4}{10}{0}{0}
+\Q{4}{14}{0}{0}
+\I{3}{11}{1}{0}
+\newLinverse{-4}{10}{2}{1}
+\newL{4}{13}{0}{1}
+\newLinverse{15}{14}{1}{0}
+\newL{-4}{16}{0}{1}
+\I{11}{9}{1}{0}
+\I{4}{9}{1}{1}
+\stepcounter{aux}}
+
+\setcounter{aux}{0}\whiledo{\theaux<5}{\newslide
+	\safer
+\I{3}{10}{1}{0}
+\Q{4}{10}{0}{0}
+\Q{4}{13}{0}{0}
+\I{3}{11}{1}{0}
+\newLinverse{-4}{10}{2}{1}
+\newL{4}{13}{0}{1}
+\newLinverse{16}{12}{2}{0}
+\newL{-4}{15}{0}{1}
+\I{11}{10}{1}{0}
+\I{4}{10}{1}{1}
+\stepcounter{aux}}
+
+\setcounter{aux}{0}\whiledo{\theaux<5}{\newslide
+	\safer
+\I{3}{10}{1}{0}
+\Q{4}{10}{0}{0}
+\Q{4}{13}{0}{0}
+\I{3}{11}{1}{0}
+\newLinverse{-4}{10}{2}{1}
+\newL{4}{13}{0}{1}
+\newLinverse{18}{10}{2}{0}
+\newL{-4}{14}{0}{1}
+\I{11}{11}{1}{0}
+\I{4}{11}{1}{1}
+\stepcounter{aux}}
+
+\setcounter{aux}{0}\whiledo{\theaux<40}{\newslide
+	\safer
+\I{3}{10}{1}{0}
+\Q{4}{10}{0}{0}
+\Q{4}{13}{0}{0}
+\I{3}{11}{1}{0}
+\newLinverse{-4}{10}{2}{1}
+\newL{4}{13}{0}{1}
+\newLinverse{19}{10}{2}{0}
+\newL{-4}{13}{0}{1}
+\I{11}{11}{1}{0}
+\I{4}{11}{1}{1}
+\eraser{4}{10.7}{1.2}{0.6}{0}{0}
+\eraser{4}{13.7}{1.2}{0.6}{0}{0}
+\stepcounter{aux}}
+
+\end{tikzpicture}
+\end{animateinline}
+
+\end{document}
